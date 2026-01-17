@@ -1,3 +1,5 @@
+GOOS?=darwin
+GOARCH?=arm64
 NAME=ffmpeg-make
 BASE_BUILD_DIR=build
 BUILD_NAME=$(GOOS)-$(GOARCH)$(GOARM)

@@ -49,6 +49,7 @@ func (e *execute) MakeM4r(ctx context.Context, args args.M4RArgs) (err error) {
 		"b:a":       "256k",    // 高品质铃声，体积和音质的平衡选择
 		"ar":        "44100",   // 更稳定播放的采样率
 		"ac":        "2",       // 立体声双声道
+		"f":         "ipod",    // iPod 格式
 	})
 
 	err = stream.WithErrorOutput(os.Stderr).Run()
