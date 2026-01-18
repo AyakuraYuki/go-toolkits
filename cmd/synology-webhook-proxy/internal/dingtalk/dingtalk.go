@@ -15,6 +15,8 @@ import (
 	"github.com/AyakuraYuki/go-toolkits/pkg/cjson"
 )
 
+const signApi = "https://oapi.dingtalk.com/robot/send?access_token=%s&timestamp=%d&sign=%s"
+
 type Webhook struct {
 	queue chan *Message
 	cli   *resty.Client
@@ -23,21 +25,35 @@ type Webhook struct {
 type Message struct {
 	Title string `json:"title"`
 	Text  string `json:"text"`
+	Auth  Auth   `json:"auth"`
+}
 
+type Auth struct {
 	Token     string `json:"-"`
 	Secret    string `json:"-"`
 	timestamp int64
 }
 
-func (m *Message) endpoint() string {
+func (m *Auth) endpoint() string {
 	m.timestamp = time.Now().UnixMilli()
 	val := fmt.Sprintf("%d\n%s", m.timestamp, m.Secret)
 	secretBS := []byte(m.Secret)
 	valBS := []byte(val)
 	hmacBS := crypto.HmacSHA256(valBS, secretBS)
 	sign := base64.StdEncoding.EncodeToString(hmacBS)
-	sign = url.QueryEscape(sign)
-	return fmt.Sprintf("https://oapi.dingtalk.com/robot/send?access_token=%s&timestamp=%d&sign=%s", m.Token, m.timestamp, sign)
+
+	u := url.URL{
+		Scheme: "https",
+		Host:   "oapi.dingtalk.com",
+		Path:   "/robot/send",
+	}
+	q := u.Query()
+	q.Set("access_token", m.Token)
+	q.Set("timestamp", fmt.Sprintf("%d", m.timestamp))
+	q.Set("sign", sign)
+	u.RawQuery = q.Encode()
+
+	return u.String()
 }
 
 func (m *Message) String() string {
@@ -126,7 +142,7 @@ func (w *Webhook) send(m *Message) {
 	rsp, err := w.cli.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(md).
-		Post(m.endpoint())
+		Post(m.Auth.endpoint())
 	if err != nil {
 		log.Printf("[x] dingtalk notify failed: %v", err)
 	}

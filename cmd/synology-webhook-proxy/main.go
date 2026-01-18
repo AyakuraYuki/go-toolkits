@@ -62,10 +62,12 @@ func SendDingTalkMessage(c *gin.Context) {
 	text := c.PostForm("text")
 
 	dingtalk.Notify(&dingtalk.Message{
-		Title:  title,
-		Text:   text,
-		Token:  token,
-		Secret: secret,
+		Title: title,
+		Text:  text,
+		Auth: dingtalk.Auth{
+			Token:  token,
+			Secret: secret,
+		},
 	})
 
 	c.AbortWithStatusJSON(http.StatusOK, gin.H{"message": "ok"})
