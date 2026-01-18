@@ -1,6 +1,7 @@
 package dingtalk
 
 import (
+	"crypto/tls"
 	"encoding/base64"
 	"fmt"
 	"log"
@@ -73,6 +74,7 @@ func init() {
 		cli := resty.New()
 		cli.SetTimeout(30 * time.Second)
 		cli.SetRetryCount(0)
+		cli.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 		instance.cli = cli
 
 		go instance.start()
