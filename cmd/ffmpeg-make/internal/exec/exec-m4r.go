@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	maxIOSRingtoneSeconds = 40    // 默认 iOS 铃声时长（秒）
-	fadeSeconds           = "1.5" // 淡入淡出标准时长（秒）
+	maxIOSRingtoneSeconds = 40  // 默认 iOS 铃声时长（秒）
+	fadeSeconds           = "2" // 淡入淡出标准时长（秒）
 )
 
 func (e *execute) MakeM4r(ctx context.Context, args args.M4RArgs) (err error) {
