@@ -21,6 +21,11 @@ func main() {
 	flag.Parse()
 
 	if root == "" {
+		if len(os.Args) > 1 {
+			root = os.Args[1]
+		}
+	}
+	if root == "" {
 		log.Fatalln("root directory required")
 	}
 
